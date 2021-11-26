@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import com.ruthwikkk.compose.dots.ui.theme.DotsTheme
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -25,9 +26,55 @@ class MainActivity : ComponentActivity() {
         setContent {
             DotsTheme {
                 Surface(color = MaterialTheme.colors.background) {
-                    Dots()
+                    Helix()
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun Helix() {
+
+    val radius = 20f
+    val yScale = 120f
+    val transition = rememberInfiniteTransition()
+    val translateAnim by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            tween(
+                durationMillis = 2000,
+                delayMillis = 0,
+                easing = LinearEasing
+            ),
+            RepeatMode.Restart,
+        )
+    )
+
+    Canvas(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+
+        for (i in 0..360 step 30) {
+            drawCircle(
+                color = Color(0xFF393939),
+                radius = radius - (cos(Math.toRadians((i + translateAnim).toDouble())) * radius / 2).toFloat(),
+                center = Offset(
+                    (320 + i.toFloat() * 2f),
+                    this.center.y + sin(Math.toRadians((i + translateAnim).toDouble())).toFloat() * yScale
+                )
+            )
+
+            drawCircle(
+                color = Color(0xFF393939),
+                radius = radius - (cos(Math.toRadians((i + 180 - translateAnim).toDouble())) * radius / 2).toFloat(),
+                center = Offset(
+                    (320 + i.toFloat() * 2f),
+                    this.center.y + sin(-Math.toRadians((i + translateAnim).toDouble())).toFloat() * yScale
+                )
+            )
         }
     }
 }
@@ -106,7 +153,9 @@ fun Dots(){
             )
         )
 
-        Canvas(modifier = Modifier.fillMaxSize().background(color = Color(0xFF212121))){
+        Canvas(modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(0xFF212121))){
             drawCircle(color = Color.Cyan, center = this.center, radius = 10f)
 
             generatePoints(radiusAnimOuter1.toInt(), this.center, translateAnim).forEach{
