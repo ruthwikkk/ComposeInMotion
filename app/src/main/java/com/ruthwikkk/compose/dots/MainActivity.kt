@@ -28,7 +28,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.ruthwikkk.compose.dots.ui.theme.DotsTheme
 import com.ruthwikkk.compose.dots.ui.theme.Purple500
+import kotlin.math.ceil
 import kotlin.math.cos
+import kotlin.math.floor
 import kotlin.math.sin
 
 class MainActivity : ComponentActivity() {
@@ -39,7 +41,158 @@ class MainActivity : ComponentActivity() {
                 Surface(color = MaterialTheme.colors.background) {
                     // Dots()
                     // Helix()
-                    XLVI()
+                    // XLVI()
+                    // Square()
+                    Spinner()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun Spinner() {
+
+    val transition = rememberInfiniteTransition()
+    val rotateAngleAnim by transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 720f,
+        animationSpec = infiniteRepeatable(
+            tween(
+                durationMillis = 2000,
+                delayMillis = 0,
+                easing = LinearEasing
+            ),
+            RepeatMode.Restart
+        )
+    )
+
+    Canvas(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color(0xFF212121))
+    ) {
+
+        if (rotateAngleAnim > 360) {
+            val list = generatePointsForSpinnerEnd(220, this.center, rotateAngleAnim - 360)
+            list.forEachIndexed { index, offset ->
+                drawCircle(
+                    color = Color.Cyan,
+                    center = offset,
+                    radius = if (index == 0) 20 - rotateAngleAnim % 20 else 20f,
+                    style = Stroke(10f)
+                )
+            }
+        } else {
+            val list = generatePointsForSpinnerStart(220, this.center, rotateAngleAnim)
+            list.forEachIndexed { index, offset ->
+                drawCircle(
+                    color = Color.Cyan,
+                    center = offset,
+                    radius = if (list.size - 1 == index) rotateAngleAnim % 20 else 20f,
+                    style = Stroke(10f)
+                )
+            }
+        }
+
+    }
+}
+
+fun generatePointsForSpinnerStart(radius: Int, origin: Offset, angle: Float): ArrayList<Offset> {
+    val list = ArrayList<Offset>()
+
+    for (i in 0..angle.toInt() step 20) {
+        val x = radius * cos(Math.toRadians(i.toDouble())) + origin.x
+        val y = radius * sin(Math.toRadians(i.toDouble())) + origin.y
+        list.add(Offset(x.toFloat(), y.toFloat()))
+    }
+    return list
+}
+
+fun generatePointsForSpinnerEnd(radius: Int, origin: Offset, angle: Float): ArrayList<Offset> {
+    val list = ArrayList<Offset>()
+
+    val lowerLimit = ceil(angle/20.0)*20
+    for (i in lowerLimit.toInt()..360 step 20) {
+        val x = radius * cos(Math.toRadians(i.toDouble())) + origin.x
+        val y = radius * sin(Math.toRadians(i.toDouble())) + origin.y
+        list.add(Offset(x.toFloat(), y.toFloat()))
+    }
+    return list
+}
+
+@Composable
+fun Square() {
+    var squareSize = 4
+    val transition = rememberInfiniteTransition()
+    val translateAnim by transition.animateFloat(
+        initialValue = 20f,
+        targetValue = 40f,
+        animationSpec = infiniteRepeatable(
+            tween(
+                durationMillis = 2000,
+                delayMillis = 0,
+                easing = LinearEasing
+            ),
+            RepeatMode.Restart,
+        )
+    )
+
+    var step = 1
+
+    var twoDArray = arrayOf<Array<Offset>>()
+    for (i in 0 until squareSize) {
+        var array = arrayOf<Offset>()
+        for (j in 0 until squareSize) {
+            array += Offset(i * 50f, j * 50f)
+        }
+        twoDArray += array
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Purple500)
+    ) {
+        Canvas(
+            modifier = Modifier
+                .size(150.dp)
+                .align(Alignment.Center)
+                .pointerInput(Unit) {
+                    detectTapGestures(onTap = {
+                        step++
+                    })
+                }
+        ) {
+            /*for (array in twoDArray) {
+                for (value in array) {
+                    drawRect(Color.White, value, size = Size(translateAnim, translateAnim))
+                }
+            }*/
+
+            /*for (i in 0..4) {
+                for (j in 0..4) {
+                    if(i == j){
+                        drawRect(Color.White, twoDArray[i][j], size = Size(translateAnim, translateAnim))
+                    }else{
+                        drawRect(Color.White, twoDArray[i][j], size = Size(20f, 20f))
+                    }
+                }
+            }*/
+
+            for (i in 0 until squareSize) {
+                for (j in 0 until squareSize) {
+                    when {
+                        i + j == step -> {
+                            drawRect(Color.White, twoDArray[i][j], size = Size(translateAnim, translateAnim))
+                        }
+                        i + j < step -> {
+                            drawRect(Color.White, twoDArray[i][j], size = Size(40f, 40f))
+                        }
+                        else -> {
+                            drawRect(Color.White, twoDArray[i][j], size = Size(20f, 20f))
+                        }
+                    }
                 }
             }
         }
@@ -133,7 +286,9 @@ fun XLVI() {
         animationSpec = tween(animationDuration)
     )
 
-    Box(modifier = Modifier.fillMaxSize().background(Purple500)){
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(Purple500)){
         Canvas(
             modifier = Modifier
                 .size(150.dp)
