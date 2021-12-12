@@ -41,6 +41,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             DotsTheme {
                 Surface(color = MaterialTheme.colors.background) {
+
                     // Dots()
                     // Helix()
                     // XLVI()
