@@ -47,7 +47,8 @@ class MainActivity : ComponentActivity() {
                     // XLVI()
                     // Square()
                     // Spinner()
-                    Spinner2()
+                    // Spinner2()
+                    ShapesLoader()
                 }
             }
         }
