@@ -5,8 +5,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -15,9 +13,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.rotate
-
-enum class BounceState { Top, Down }
-
 
 @Composable
 fun ShapesLoader() {
@@ -97,10 +92,8 @@ fun ShapesLoader() {
     Canvas(modifier = Modifier.fillMaxSize()) {
 
         val centreForRect1 = Offset(center.x - side, center.y - side)
-        val rectForRect1 = Rect(centreForRect1, side)
 
         val centreForCircle = Offset(center.x + side, center.y - side)
-        val rectForCircle = Rect(centreForCircle, side)
 
         val centreForTriangle = Offset(center.x - side + 20, center.y + side)
         val rectForTriangle = Rect(centreForTriangle, side)
@@ -114,7 +107,6 @@ fun ShapesLoader() {
         }
 
         val centreForRect2 = Offset(center.x + side, center.y + side)
-        val rectForRect2 = Rect(centreForRect2, side)
 
         drawIntoCanvas { canvas ->
             drawRoundRect(
